@@ -193,16 +193,16 @@ public class EquityAnalyzer {
         }
         int straightCounter = 0;
         for (Value v : Value.values()) {
-            if (valueMap.containsKey(v) && valueMap.get(v) == 1) {
+            if (valueMap.containsKey(v) && valueMap.get(v) >= 1) {
                 for (Value vNext : Value.values()) {
                     if (Value.getIntValue(vNext) > Value.getIntValue(v)) { //if v = 4, don't start looking until vNext = 5
                         if (straightCounter == 5) {
                             return true;
                         }
-                        if (valueMap.containsKey(vNext) && valueMap.get(vNext) == 0) {
+                        if (!valueMap.containsKey(vNext)) {
                             break;
                         }
-                        else if (valueMap.containsKey(vNext) && valueMap.get(vNext) == 1) {
+                        else if (valueMap.containsKey(vNext) && valueMap.get(vNext) >= 1) {
                             straightCounter++;
                         }
 
