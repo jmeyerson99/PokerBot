@@ -9,8 +9,8 @@ public class Board {
     private ArrayList<Card> board;
 
     public Board() {
-        this.flop = new ArrayList<Card>;
-        this.board = new ArrayList<Card>;
+        this.flop = new ArrayList<Card>();
+        this.board = new ArrayList<Card>();
     }
 
     public Card getRiver() {
@@ -29,18 +29,35 @@ public class Board {
         return board;
     }
 
-    public void setFlop(ArrayList<Card> flop) {
-        this.flop = flop;
-        this.board.add(flop);
+    public void setFlop(Card flop1, Card flop2, Card flop3) {
+        this.flop.add(flop1);
+        this.flop.add(flop2);
+        this.flop.add(flop3);
+        this.board.add(flop1);
+        this.board.add(flop2);
+        this.board.add(flop3);
     }
 
     public void setTurn(Card turn) {
         this.turn = turn;
-        this.board.add(turn)
+        this.board.add(turn);
     }
 
     public void setRiver(Card river) {
         this.river = river;
-        this.board.add(river)
+        this.board.add(river);
+    }
+
+    @Override
+    public String toString() {
+        String out = "";
+        for (Card c : this.board) {
+            out +=  c.toString() + " ";
+        }
+        return out;
+    }
+
+    public int getSize() {
+        return this.board.size();
     }
 }

@@ -15,4 +15,9 @@ public class Hand {
     public Card getCard2() {
         return card2;
     }
+
+    @Override
+    public String toString() {
+        return card1.toString() + " " + card2.toString();
+    }
 }
