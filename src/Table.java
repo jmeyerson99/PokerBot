@@ -13,7 +13,7 @@ public class Table {
         this.players = new ArrayList<>();
 
         for (int i = 0; i< numPlayers; i++) {
-            this.players.add(new Player());
+            this.players.add(new Player(Integer.toString(i)));
         }
 
         this.board = new Board();
@@ -25,7 +25,7 @@ public class Table {
             Card card1 = this.deck.getRandomCard();
             Card card2 = this.deck.getRandomCard();
             p.setHand(new Hand(card1, card2));
-            System.out.println("Player hand: " + p.getHand().toString());
+            System.out.println("Player " + p.getName() + " hand: " + p.getHand().toString());
         }
     }
 

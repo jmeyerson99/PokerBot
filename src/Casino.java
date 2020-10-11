@@ -14,6 +14,7 @@ public class Casino {
         this.table.dealFlop();
         this.table.dealTurn();
         this.table.dealRiver();
+        this.analyzer.determineEquity();
     }
 
     public static void main(String[] args) {
