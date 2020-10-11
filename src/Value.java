@@ -1,5 +1,3 @@
-import java.util.Comparator;
-
 public enum Value {
     TWO,
     THREE,

@@ -1,6 +1,7 @@
 public class Player {
 
     private Hand hand;
+    private HandRanking handRanking;
     private String name;
 
     public Player(String name) {
@@ -17,5 +18,13 @@ public class Player {
 
     public String getName() {
         return name;
+    }
+
+    public HandRanking getHandRanking() {
+        return handRanking;
+    }
+
+    public void setHandRanking(HandRanking handRanking) {
+        this.handRanking = handRanking;
     }
 }

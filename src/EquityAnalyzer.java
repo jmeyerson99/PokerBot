@@ -32,36 +32,37 @@ public class EquityAnalyzer {
 
     private void determineShowdownWinner() {
         for (Player p : this.table.getPlayers()) {
-            String resultString = getBestHand(p.getHand(), this.table.getBoard());
-            System.out.println("Player " + p.getName() + " has " + resultString);
+            HandRanking bestHand = getBestHand(p.getHand(), this.table.getBoard(), p);
+            System.out.println("Player " + p.getName() + " has " + bestHand);
         }
     }
 
-    private String getBestHand(Hand hand, Board board) {
+    // should probably return the collection of the best 5 cards making the hand
+    private HandRanking getBestHand(Hand hand, Board board, Player p) {
         ArrayList<Card> allCards = new ArrayList<>();
         allCards.add(hand.getCard1());
         allCards.add(hand.getCard2());
         allCards.addAll(board.getBoard());
 
         boolean royalFlush = checkRoyalFlush(allCards);
-        if (royalFlush) {return "a royal flush";}
+        if (royalFlush) {p.setHandRanking(HandRanking.ROYAL_FLUSH); return HandRanking.ROYAL_FLUSH;}
         boolean straightFlush = checkStraightFlush(allCards);
-        if (straightFlush) {return "a straight flush";}
+        if (straightFlush) {p.setHandRanking(HandRanking.STRAIGHT_FLUSH); return HandRanking.STRAIGHT_FLUSH;}
         boolean quads = checkQuads(allCards);
-        if (quads) {return "quads";}
+        if (quads) {p.setHandRanking(HandRanking.QUADS); return HandRanking.QUADS;}
         boolean fullHouse = checkFullHouse(allCards);
-        if (fullHouse) {return "a full house";}
+        if (fullHouse) {p.setHandRanking(HandRanking.FULL_HOUSE); return HandRanking.FULL_HOUSE;}
         boolean flush = checkFlush(allCards);
-        if (flush) {return "a flush";}
+        if (flush) {p.setHandRanking(HandRanking.FLUSH); return HandRanking.FLUSH;}
         boolean straight = checkStraight(allCards);
-        if (straight) {return "a straight";}
+        if (straight) {p.setHandRanking(HandRanking.STRAIGHT); return HandRanking.STRAIGHT;}
         boolean trips = checkTrips(allCards);
-        if (trips) {return "trips";}
+        if (trips) {p.setHandRanking(HandRanking.TRIPS); return HandRanking.TRIPS;}
         boolean twoPair = checkTwoPair(allCards);
-        if (twoPair) {return "2 pair";}
+        if (twoPair) {p.setHandRanking(HandRanking.TWO_PAIR); return HandRanking.TWO_PAIR;}
         boolean pair = checkPair(allCards);
-        if (pair) {return "1 pair";}
-        return "junk";
+        if (pair) {p.setHandRanking(HandRanking.ONE_PAIR); return HandRanking.ONE_PAIR;}
+        return HandRanking.JUNK;
     }
 
     private boolean checkFlush(ArrayList<Card> cards) {
