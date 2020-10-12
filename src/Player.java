@@ -5,7 +5,7 @@ public class Player {
     private Hand hand;
     private HandRanking handRanking;
     private ArrayList<Card> bestPossibleHand;
-    private String name;
+    private final String name;
 
     public Player(String name) {
         this.name = name;
@@ -32,11 +32,7 @@ public class Player {
         this.handRanking = handRanking;
     }
 
-    public ArrayList<Card> getBestPossibleHand() {
-        return bestPossibleHand;
-    }
+    public ArrayList<Card> getBestPossibleHand() { return bestPossibleHand; }
 
-    public void setBestPossibleHand(ArrayList<Card> bestPossibleHand) {
-        this.bestPossibleHand = bestPossibleHand;
-    }
+    public void setBestPossibleHand(ArrayList<Card> bestPossibleHand) { this.bestPossibleHand = bestPossibleHand; }
 }
