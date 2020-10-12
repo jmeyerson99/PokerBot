@@ -1,11 +1,15 @@
+import java.util.ArrayList;
+
 public class Player {
 
     private Hand hand;
     private HandRanking handRanking;
+    private ArrayList<Card> bestPossibleHand;
     private String name;
 
     public Player(String name) {
         this.name = name;
+        this.bestPossibleHand = new ArrayList<>();
     }
 
     public Hand getHand() {
@@ -26,5 +30,13 @@ public class Player {
 
     public void setHandRanking(HandRanking handRanking) {
         this.handRanking = handRanking;
+    }
+
+    public ArrayList<Card> getBestPossibleHand() {
+        return bestPossibleHand;
+    }
+
+    public void setBestPossibleHand(ArrayList<Card> bestPossibleHand) {
+        this.bestPossibleHand = bestPossibleHand;
     }
 }

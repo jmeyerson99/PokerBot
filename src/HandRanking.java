@@ -8,11 +8,11 @@ public enum HandRanking {
     TRIPS,
     TWO_PAIR,
     ONE_PAIR,
-    JUNK;
+    HIGH_CARD;
 
     public static int getRankValue(HandRanking rank) {
         switch (rank) {
-            case JUNK:
+            case HIGH_CARD:
                 return 0;
             case ONE_PAIR:
                 return 1;
