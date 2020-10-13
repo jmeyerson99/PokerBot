@@ -16,9 +16,9 @@ public class Table {
             new Card(Value.KING, Suit.SPADE), new Card(Value.KING, Suit.CLUB), // Player 1
             new Card(Value.QUEEN, Suit.SPADE), new Card(Value.QUEEN, Suit.CLUB), // Player 2
             new Card(Value.JACK, Suit.SPADE), new Card(Value.TEN, Suit.CLUB), // Player 3
-            new Card(Value.EIGHT, Suit.SPADE), new Card(Value.KING, Suit.DIAMOND), new Card(Value.TWO, Suit.HEART), // Flop
+            new Card(Value.TWO, Suit.SPADE), new Card(Value.KING, Suit.DIAMOND), new Card(Value.TWO, Suit.HEART), // Flop
             new Card(Value.TEN, Suit.SPADE), // Turn
-            new Card(Value.JACK, Suit.DIAMOND) // River
+            new Card(Value.TWO, Suit.DIAMOND) // River
     ));
 
     public Table(int numPlayers) {

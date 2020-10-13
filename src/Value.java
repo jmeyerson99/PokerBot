@@ -1,18 +1,17 @@
 public enum Value {
-    TWO,
-    THREE,
-    FOUR,
-    FIVE,
-    SIX,
-    SEVEN,
-    EIGHT,
-    NINE,
-    TEN,
-    JACK,
-    QUEEN,
+    ACE,
     KING,
-    ACE;
-
+    QUEEN,
+    JACK,
+    TEN,
+    NINE,
+    EIGHT,
+    SEVEN,
+    SIX,
+    FIVE,
+    FOUR,
+    THREE,
+    TWO;
 
     public static int getIntValue(Value val) {
         switch (val) {
