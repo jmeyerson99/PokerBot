@@ -1,9 +1,9 @@
 package unit.equity;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 
 import equity.*;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class test_EquityAnalyzer {
 
@@ -13,7 +13,7 @@ public class test_EquityAnalyzer {
     private Board testBoard;
     private Table testTable;
 
-    @BeforeAll
+    @BeforeEach
     public void setup()
     {
         testTable = new Table(1);
@@ -31,5 +31,38 @@ public class test_EquityAnalyzer {
         testBoard.setTurn(new Card(Value.NINE, Suit.CLUB));
         testBoard.setRiver(new Card(Value.TWO, Suit.HEART));
         Assertions.assertEquals(CuT.determineBestPossibleHand(testPlayer), HandRanking.HIGH_CARD);
+    }
+
+    @Test
+    public void testPocketPair()
+    {
+        testPlayer.setHand(new Hand(new Card(Value.THREE, Suit.HEART), new Card(Value.THREE, Suit.SPADE)));
+
+        testBoard.setFlop(new Card(Value.JACK, Suit.DIAMOND), new Card(Value.KING, Suit.HEART), new Card(Value.FOUR, Suit.CLUB));
+        testBoard.setTurn(new Card(Value.NINE, Suit.CLUB));
+        testBoard.setRiver(new Card(Value.TWO, Suit.HEART));
+        Assertions.assertEquals(CuT.determineBestPossibleHand(testPlayer), HandRanking.ONE_PAIR);
+    }
+
+    @Test
+    public void testBoardPair()
+    {
+        testPlayer.setHand(new Hand(new Card(Value.THREE, Suit.HEART), new Card(Value.ACE, Suit.SPADE)));
+
+        testBoard.setFlop(new Card(Value.JACK, Suit.DIAMOND), new Card(Value.JACK, Suit.HEART), new Card(Value.FOUR, Suit.CLUB));
+        testBoard.setTurn(new Card(Value.NINE, Suit.CLUB));
+        testBoard.setRiver(new Card(Value.TWO, Suit.HEART));
+        Assertions.assertEquals(CuT.determineBestPossibleHand(testPlayer), HandRanking.ONE_PAIR);
+    }
+
+    @Test
+    public void testOnePair()
+    {
+        testPlayer.setHand(new Hand(new Card(Value.TWO, Suit.HEART), new Card(Value.THREE, Suit.SPADE)));
+
+        testBoard.setFlop(new Card(Value.JACK, Suit.DIAMOND), new Card(Value.KING, Suit.HEART), new Card(Value.FOUR, Suit.CLUB));
+        testBoard.setTurn(new Card(Value.NINE, Suit.CLUB));
+        testBoard.setRiver(new Card(Value.TWO, Suit.HEART));
+        Assertions.assertEquals(CuT.determineBestPossibleHand(testPlayer), HandRanking.ONE_PAIR);
     }
 }
