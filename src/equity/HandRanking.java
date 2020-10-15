@@ -1,4 +1,4 @@
-package java;
+package equity;
 
 public enum HandRanking {
     ROYAL_FLUSH,

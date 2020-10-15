@@ -1,4 +1,4 @@
-package java;
+package equity;
 
 import java.util.ArrayList;
 

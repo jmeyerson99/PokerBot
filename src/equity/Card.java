@@ -1,4 +1,4 @@
-package java;
+package equity;
 
 public class Card {
     private final Suit suit;

@@ -1,3 +1,5 @@
+package equity;
+
 public class Casino {
 
     private Table table;

@@ -1,6 +1,9 @@
-package java;
+package equity;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Map;
 
 public class EquityAnalyzer {
 
@@ -37,6 +40,55 @@ public class EquityAnalyzer {
                 // ERROR (invalid size)
                 break;
         }
+    }
+
+    /**
+     * Given a player, determine the best hand that can be made with the board and the player's hole cards
+     * @param p The player
+     */
+    public HandRanking determineBestPossibleHand(Player p) {
+        ArrayList<Card> allCards = new ArrayList<>();
+        allCards.add(p.getHand().getCard1());
+        allCards.add(p.getHand().getCard2());
+        allCards.addAll(table.getBoard().getBoard()); //TODO not great, may want to fix later
+
+        boolean royalFlush = checkRoyalFlush(allCards);
+        if (royalFlush) {
+            return HandRanking.ROYAL_FLUSH;
+        }
+        boolean straightFlush = checkStraightFlush(allCards);
+        if (straightFlush) {
+            return HandRanking.STRAIGHT_FLUSH;
+        }
+        boolean quads = checkQuads(allCards);
+        if (quads) {
+            return HandRanking.QUADS;
+        }
+        boolean fullHouse = checkFullHouse(allCards);
+        if (fullHouse) {
+            return HandRanking.FULL_HOUSE;
+        }
+        boolean flush = checkFlush(allCards);
+        if (flush) {
+            return HandRanking.FLUSH;
+        }
+        boolean straight = checkStraight(allCards);
+        if (straight) {
+            return HandRanking.STRAIGHT;
+        }
+        boolean trips = checkTrips(allCards);
+        if (trips) {
+            return HandRanking.TRIPS;
+        }
+        boolean twoPair = checkTwoPair(allCards);
+        if (twoPair) {
+            return HandRanking.TWO_PAIR;
+        }
+        boolean pair = checkPair(allCards);
+        if (pair) {
+            return HandRanking.ONE_PAIR;
+        }
+        return HandRanking.HIGH_CARD;
     }
 
     private void determineShowdownWinner() {
