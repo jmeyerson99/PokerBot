@@ -1,3 +1,5 @@
+package java;
+
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -16,9 +18,9 @@ public class Table {
             new Card(Value.KING, Suit.SPADE), new Card(Value.KING, Suit.CLUB), // Player 1
             new Card(Value.QUEEN, Suit.SPADE), new Card(Value.QUEEN, Suit.CLUB), // Player 2
             new Card(Value.JACK, Suit.SPADE), new Card(Value.TEN, Suit.CLUB), // Player 3
-            new Card(Value.TWO, Suit.SPADE), new Card(Value.KING, Suit.DIAMOND), new Card(Value.TWO, Suit.HEART), // Flop
-            new Card(Value.TEN, Suit.SPADE), // Turn
-            new Card(Value.TWO, Suit.DIAMOND) // River
+            new Card(Value.QUEEN, Suit.SPADE), new Card(Value.NINE, Suit.DIAMOND), new Card(Value.EIGHT, Suit.HEART), // Flop
+            new Card(Value.SEVEN, Suit.DIAMOND), // Turn
+            new Card(Value.TEN, Suit.DIAMOND) // River
     ));
 
     public Table(int numPlayers) {

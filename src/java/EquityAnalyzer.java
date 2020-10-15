@@ -1,3 +1,5 @@
+package java;
+
 import java.util.*;
 
 public class EquityAnalyzer {
@@ -86,6 +88,7 @@ public class EquityAnalyzer {
         boolean straight = checkStraight(allCards);
         if (straight) {
             p.setHandRanking(HandRanking.STRAIGHT);
+            p.setBestPossibleHand(straightBestHand(allCards));
             return;
         }
         boolean trips = checkTrips(allCards);
@@ -482,54 +485,121 @@ public class EquityAnalyzer {
         return bestFiveCards;
     }
 
+    // TODO - check case for this hand: 4, 5, 5, 6, 7, 8, K
+    // TODO - check case for this hand: 4, 5, 5, 5, 6, 7, 8
     /**
      * Given a list of 7 cards, determine if they can create a straight
      * @param cards The list of 7 cards
      * @return True if a straight is possible, false if not
      */
     private boolean checkStraight(ArrayList<Card> cards) {
-        Map<Value, Integer> valueMap = new HashMap<>();
-        Integer valueCount;
-        for (Card c : cards) {
-            if (valueMap.containsKey(c.getValue())) {
-                valueCount = valueMap.get(c.getValue()) + 1; }
-            else {
-                valueCount = 1;
-            }
-            valueMap.put(c.getValue(), valueCount);
-        }
+        Map<Value, Integer> valueMap = mapCardsToValue(cards); //may not be needed
+        cards.sort(new SortByValueDescending()); //sort the cards by value (ace is high)
+
         int straightCounter = 0;
-        for (Value v : Value.values()) {
-            if (valueMap.containsKey(v) && valueMap.get(v) >= 1) {
-                for (Value vNext : Value.values()) {
-                    if (Value.getIntValue(vNext) > Value.getIntValue(v)) { //if v = 4, don't start looking until vNext = 5
-                        if (straightCounter == 5) {
-                            return true;
-                        }
-                        if (!valueMap.containsKey(vNext)) {
-                            straightCounter = 0;
-                            break;
-                        }
-                        else if (valueMap.containsKey(vNext) && valueMap.get(vNext) >= 1) {
-                            straightCounter++;
-                        }
+        Value starterValue = null;
+        for (int i = 0; i < cards.size(); i++) {
+            Card c = cards.get(i);
+            starterValue = c.getValue();
+            straightCounter = 0;
 
-                    }
+            for (int j = 0; j < cards.size() - i; j++) { // loop through remaining cards (j is offset from i)
+                // ard ca  = cards.get(i+j); // DEBUG
+                //int startVal = Value.getIntValue(starterValue); // DEBUG
+                //int compareVal = Value.getIntValue(cards.get(i+j).getValue()) - j; // DEBUG
+                if (straightCounter == 5) {
+                    return true;
+                } else if (Value.getIntValue(cards.get(i + j).getValue()) + j == Value.getIntValue(starterValue)) {
+                    straightCounter++;
+                } else {
+                    break;
                 }
-
             }
         }
+
         //check for wheel, since ACE can be high or low
-        if (valueMap.containsKey(Value.ACE) && valueMap.get(Value.ACE) == 1 &&
-                valueMap.containsKey(Value.TWO) && valueMap.get(Value.TWO) == 1 &&
-                valueMap.containsKey(Value.THREE) && valueMap.get(Value.THREE) == 1 &&
-                valueMap.containsKey(Value.FOUR) && valueMap.get(Value.FOUR) == 1 &&
-                valueMap.containsKey(Value.FIVE) && valueMap.get(Value.FIVE) == 1) {return true;}
+        return isAWheel(cards);
+    }
+
+    /**
+     * Helper function for straights to determine if the straight is a wheel
+     * @param cards A list of 7 cards
+     * @return True if a wheel can be made from the 7 cards
+     */
+    private boolean isAWheel(ArrayList<Card> cards) {
+        Map<Value, Integer> valueMap = mapCardsToValue(cards); //may not be needed
+        if (valueMap.containsKey(Value.ACE) &&
+                valueMap.containsKey(Value.TWO) &&
+                valueMap.containsKey(Value.THREE) &&
+                valueMap.containsKey(Value.FOUR) &&
+                valueMap.containsKey(Value.FIVE))
+        {return true;}
         return false;
     }
 
+    // TODO - check case for this hand: 4, 5, 5, 6, 7, 8, K
+    // TODO - check case for this hand: 4, 5, 5, 5, 6, 7, 8
+    /**
+     * If the best hand is a straight, determine which 5 cards make the best hand
+     * @param cards The list of 7 cards
+     * @return The 5 cards to make the best possible straight hand
+     */
+    private ArrayList<Card> straightBestHand(ArrayList<Card> cards) {
+        // If the player's hand is a straight, create the best hand
+
+        Map<Value, Integer> valueMap = mapCardsToValue(cards); //may not be needed
+        cards.sort(new SortByValueDescending()); //sort the cards by value (ace is high)
+        ArrayList<Card> bestFiveCards = new ArrayList<>(); //create array to hold the final hand
+
+        //Start with a wheel so there is no index out of bounds error later
+        if (isAWheel(cards)) {
+            boolean aceFlag = false, twoFlag = false, threeFlag = false, fourFlag = false, fiveFlag = false;
+            for (Card c : cards) {
+                if (!aceFlag && c.getValue() == Value.ACE) {aceFlag = true; bestFiveCards.add(c); }
+                if (!twoFlag && c.getValue() == Value.TWO) {twoFlag = true; bestFiveCards.add(c); }
+                if (!threeFlag && c.getValue() == Value.THREE) {threeFlag = true; bestFiveCards.add(c); }
+                if (!fourFlag && c.getValue() == Value.FOUR) {fourFlag = true; bestFiveCards.add(c); }
+                if (!fiveFlag && c.getValue() == Value.FIVE) {fiveFlag = true; bestFiveCards.add(c); }
+            }
+            return bestFiveCards;
+        }
+
+        boolean foundBiggestStraight = false;
+        int straightCounter = 0;
+        Value starterValue = null;
+        int startingStraightIndex = -1;
+        for (int i = 0; i < cards.size() & !foundBiggestStraight; i++) {
+            Card c = cards.get(i);
+            starterValue = c.getValue();
+            startingStraightIndex = i;
+            straightCounter = 0;
+
+            for (int j = 0; j < cards.size() - i; j++) { // loop through remaining cards (j is offset from i)
+                // ard ca  = cards.get(i+j); // DEBUG
+                //int startVal = Value.getIntValue(starterValue); // DEBUG
+                //int compareVal = Value.getIntValue(cards.get(i+j).getValue()) - j; // DEBUG
+                if (straightCounter == 5) {
+                    foundBiggestStraight = true; // SUCCESS
+                }
+                else if (Value.getIntValue(cards.get(i+j).getValue()) + j == Value.getIntValue(starterValue)) {
+                    straightCounter++;
+                }
+                else {
+                    break; // NOPE NOT THIS TIME
+                }
+            }
+        }
+
+        for (int k = 0; k < 5; k++) { // start at the straight start index and then add the next 5 cards (including that one)
+            bestFiveCards.add(cards.get(k + startingStraightIndex));
+        }
+
+        cards.removeAll(bestFiveCards); // remove all the cards added to the best hand from the remaining cards
+        return bestFiveCards;
+    }
+
     // TODO - requires implementation if there are 2 cards that make a straight, but only 1 makes a flush
-    // TODO - requires implementation if there are multiple numbers that make a straight (2,3,4,5,6, and the board is 2,2,3,4,5,6,K)
+    // TODO - requires implementation if there are multiple numbers that make a straight (2,3,4,5,6, and the board is 2,3,3,4,5,6,K)
     /**
      * Given a list of 7 cards, determine if they can create a straight flush
      * @param cards The list of 7 cards
@@ -537,7 +607,7 @@ public class EquityAnalyzer {
      */
     private boolean checkStraightFlush(ArrayList<Card> cards) {
         ArrayList<Card> straightCards = new ArrayList<>();
-        if (!checkStraight(cards)) {return false;}
+        if (!checkStraight(cards)) {return false;} // if a flush cannot happen, stop here
         cards.sort(new SortByValueDescending()); //sort the list by value
         //Determine the straight values
         Map<Value, Integer> valueMap = new HashMap<>();
@@ -582,7 +652,6 @@ public class EquityAnalyzer {
 
 
         //check for wheel, since ACE can be high or low
-        //check for wheel, since ACE can be high or low
         if (valueMap.containsKey(Value.ACE) && valueMap.get(Value.ACE) == 1 &&
                 valueMap.containsKey(Value.TWO) && valueMap.get(Value.TWO) == 1 &&
                 valueMap.containsKey(Value.THREE) && valueMap.get(Value.THREE) == 1 &&
@@ -604,7 +673,7 @@ public class EquityAnalyzer {
      * @return True if a royal flush is possible, false if not
      */
     private boolean checkRoyalFlush(ArrayList<Card> cards) {
-        Map<Value, Integer> valueMap = mapCardsToValue(cards);
+        Map<Value, Integer> valueMap = mapCardsToValue(cards); // possibly not needed at all
         if (!checkFlush(cards)) { return false; } // immediately return false if a flush is not possible
         ArrayList<Card> flushBestHand = flushBestHand(cards); // the best flush hand is a royal flush (always)
         if (flushBestHand.get(0).getValue() == Value.ACE && // these cards are only in the map's keys if they are in the list of cards

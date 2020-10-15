@@ -1,3 +1,5 @@
+package java;
+
 public enum Value {
     ACE,
     KING,

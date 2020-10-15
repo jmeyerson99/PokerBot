@@ -1,3 +1,5 @@
+package java;
+
 public enum HandRanking {
     ROYAL_FLUSH,
     STRAIGHT_FLUSH,

@@ -1,3 +1,5 @@
+package java;
+
 public class Hand {
 
     private Card card1;

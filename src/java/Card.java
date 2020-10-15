@@ -1,3 +1,5 @@
+package java;
+
 public class Card {
     private final Suit suit;
     private final Value value;
