@@ -12,6 +12,8 @@ public class Table {
     private int numPlayers;
 
     //Manual mode variables
+    //TODO - remove manual settings (this will be handled in either UNIT or STRING testing)
+    //TODO - add README files in testing directories
     private boolean manualMode = true;
     private ArrayList<Card> presetCards = new ArrayList<>(Arrays.asList(
             new Card(Value.KING, Suit.SPADE), new Card(Value.KING, Suit.CLUB), // Player 1
@@ -91,6 +93,14 @@ public class Table {
             Card river = this.deck.getCard(presetCards.get(2 * players.size() + 4));
             this.board.setRiver(river);
             System.out.println("Board (river): " + this.board.toString());
+        }
+    }
+
+    public void newHand() {
+        this.deck.resetDeck();
+        this.board.resetBoard();
+        for (Player p : this.players) {
+            p.resetHand();
         }
     }
 

@@ -112,6 +112,7 @@ public class EquityAnalyzer {
         boolean royalFlush = checkRoyalFlush(allCards);
         if (royalFlush) {
             p.setHandRanking(HandRanking.ROYAL_FLUSH);
+            p.setBestPossibleHand(royalFlushBestHand(allCards));
             return;
         }
         boolean straightFlush = checkStraightFlush(allCards);
@@ -537,8 +538,6 @@ public class EquityAnalyzer {
         return bestFiveCards;
     }
 
-    // TODO - check case for this hand: 4, 5, 5, 6, 7, 8, K
-    // TODO - check case for this hand: 4, 5, 5, 5, 6, 7, 8
     /**
      * Given a list of 7 cards, determine if they can create a straight
      * @param cards The list of 7 cards
@@ -550,22 +549,29 @@ public class EquityAnalyzer {
 
         int straightCounter = 0;
         Value starterValue = null;
+        int skipCount = 0; //used to keep track of repeated straight cards (skip an index when comparing values in the array)
         for (int i = 0; i < cards.size(); i++) {
             Card c = cards.get(i);
             starterValue = c.getValue();
             straightCounter = 0;
+            skipCount = 0;
 
             for (int j = 0; j < cards.size() - i; j++) { // loop through remaining cards (j is offset from i)
-                // ard ca  = cards.get(i+j); // DEBUG
-                //int startVal = Value.getIntValue(starterValue); // DEBUG
-                //int compareVal = Value.getIntValue(cards.get(i+j).getValue()) - j; // DEBUG
+                Card ca  = cards.get(i+j); // DEBUG
+                int startVal = Value.getIntValue(starterValue); // DEBUG
+                int compareVal = Value.getIntValue(cards.get(i+j).getValue()) + j; // DEBUG
                 if (straightCounter == 5) {
                     return true;
-                } else if (Value.getIntValue(cards.get(i + j).getValue()) + j == Value.getIntValue(starterValue)) {
+                } else if (Value.getIntValue(cards.get(i + j).getValue()) + j - skipCount == Value.getIntValue(starterValue)) {
                     straightCounter++;
+                } else if (Value.getIntValue(cards.get(i + j).getValue()) == Value.getIntValue(cards.get(i + j - 1).getValue())) { // else if (value is equal to previous, then skip and move to next card)
+                    skipCount++;
                 } else {
                     break;
                 }
+            }
+            if (straightCounter == 5) { // catches the case where the final card of the straight is the final card of the array
+                return true;
             }
         }
 
@@ -589,8 +595,8 @@ public class EquityAnalyzer {
         return false;
     }
 
-    // TODO - check case for this hand: 4, 5, 5, 6, 7, 8, K
-    // TODO - check case for this hand: 4, 5, 5, 5, 6, 7, 8
+    // TODO - check case for this hand: 4, 5, 5, 6, 7, 8, K - implemented (requires testing)
+    // TODO - check case for this hand: 4, 5, 5, 5, 6, 7, 8 - implemented (requires testing)
     /**
      * If the best hand is a straight, determine which 5 cards make the best hand
      * @param cards The list of 7 cards
@@ -619,29 +625,35 @@ public class EquityAnalyzer {
         boolean foundBiggestStraight = false;
         int straightCounter = 0;
         Value starterValue = null;
+        int skipCount = 0;
         int startingStraightIndex = -1;
         for (int i = 0; i < cards.size() & !foundBiggestStraight; i++) {
             Card c = cards.get(i);
             starterValue = c.getValue();
             startingStraightIndex = i;
             straightCounter = 0;
+            skipCount = 0;
 
             for (int j = 0; j < cards.size() - i; j++) { // loop through remaining cards (j is offset from i)
-                // ard ca  = cards.get(i+j); // DEBUG
+                //Card ca  = cards.get(i+j); // DEBUG
                 //int startVal = Value.getIntValue(starterValue); // DEBUG
                 //int compareVal = Value.getIntValue(cards.get(i+j).getValue()) - j; // DEBUG
                 if (straightCounter == 5) {
-                    foundBiggestStraight = true; // SUCCESS
-                }
-                else if (Value.getIntValue(cards.get(i+j).getValue()) + j == Value.getIntValue(starterValue)) {
+                    foundBiggestStraight = true;
+                } else if (Value.getIntValue(cards.get(i + j).getValue()) + j - skipCount == Value.getIntValue(starterValue)) {
                     straightCounter++;
+                } else if (Value.getIntValue(cards.get(i + j).getValue()) == Value.getIntValue(cards.get(i + j - 1).getValue())) { // else if (value is equal to previous, then skip and move to next card)
+                    skipCount++;
+                } else {
+                    break;
                 }
-                else {
-                    break; // NOPE NOT THIS TIME
-                }
+            }
+            if (straightCounter == 5) {
+                foundBiggestStraight = true;
             }
         }
 
+        // TODO - adjust this for the skipCount variable (follow something along the lines of the internal for loop above) - not implemented
         for (int k = 0; k < 5; k++) { // start at the straight start index and then add the next 5 cards (including that one)
             bestFiveCards.add(cards.get(k + startingStraightIndex));
         }
@@ -650,73 +662,65 @@ public class EquityAnalyzer {
         return bestFiveCards;
     }
 
-    // TODO - requires implementation if there are 2 cards that make a straight, but only 1 makes a flush
-    // TODO - requires implementation if there are multiple numbers that make a straight (2,3,4,5,6, and the board is 2,3,3,4,5,6,K)
     /**
      * Given a list of 7 cards, determine if they can create a straight flush
      * @param cards The list of 7 cards
      * @return True if a straight flush is possible, false if not
      */
     private boolean checkStraightFlush(ArrayList<Card> cards) {
-        ArrayList<Card> straightCards = new ArrayList<>();
-        if (!checkStraight(cards)) {return false;} // if a flush cannot happen, stop here
+        if (!checkFlush(cards)) {return false;} // if a flush cannot happen, stop here
+        if (!checkStraight(cards)) {return false;} // if a straight cannot happen from the flush cards, stop here
+
         cards.sort(new SortByValueDescending()); //sort the list by value
-        //Determine the straight values
-        Map<Value, Integer> valueMap = new HashMap<>();
-        Integer valueCount;
+        //Determine the cards that make a flush
+        Map<Suit, Integer> suitMap = mapCardsToSuit(cards);
+        Suit flushSuit = null;
+        for (Suit s : suitMap.keySet()) {
+            if (suitMap.get(s) >= 5) {
+                flushSuit = s;
+            }
+        }
+        ArrayList<Card> flushCards = new ArrayList<>();
         for (Card c : cards) {
-            if (valueMap.containsKey(c.getValue())) {
-                valueCount = valueMap.get(c.getValue()) + 1; }
-            else {
-                valueCount = 1;
-            }
-            valueMap.put(c.getValue(), valueCount);
-        }
-        int straightCounter = 0;
-        Value straightStart = Value.KING;
-        for (Value v : Value.values()) {
-            if (valueMap.containsKey(v) && valueMap.get(v) == 1) {
-                for (Value vNext : Value.values()) {
-                    if (Value.getIntValue(vNext) > Value.getIntValue(v)) { //if v = 4, don't start looking until vNext = 5
-                        if (straightCounter == 5) {
-                            straightStart = v;
-                        }
-                        if (valueMap.containsKey(vNext) && valueMap.get(vNext) == 0) {
-                            break;
-                        } else if (valueMap.containsKey(vNext) && valueMap.get(vNext) == 1) {
-                            straightCounter++;
-                        }
-
-                    }
-                }
-
+            if (c.getSuit() == flushSuit) {
+                flushCards.add(c);
             }
         }
+        flushCards.sort(new SortByValueDescending());
 
-        //build the array of cards that make the straight
-        for (int i = 0; i < cards.size(); i++) {
-            if (cards.get(i).getValue() == straightStart) {
-                for (int j = 0; j < 4; j++) {
-                    straightCards.add(cards.get(j));
-                }
+        return checkStraight(flushCards);
+    }
+
+    // TODO - implemented (requires testing)
+    /**
+     * If the best hand is a straight flush, determine which 5 cards make the best hand
+     * @param cards The list of 7 cards
+     * @return The 5 cards to make the best possible straight flush hand
+     */
+    private ArrayList<Card> straightFlushBestHand(ArrayList<Card> cards) {
+        // If the player's hand is a straight flush, create the best hand
+
+        cards.sort(new SortByValueDescending()); //sort the list by value
+        //Determine the cards that make a flush
+        Map<Suit, Integer> suitMap = mapCardsToSuit(cards);
+        Suit flushSuit = null;
+        for (Suit s : suitMap.keySet()) {
+            if (suitMap.get(s) >= 5) {
+                flushSuit = s;
             }
         }
-
-
-        //check for wheel, since ACE can be high or low
-        if (valueMap.containsKey(Value.ACE) && valueMap.get(Value.ACE) == 1 &&
-                valueMap.containsKey(Value.TWO) && valueMap.get(Value.TWO) == 1 &&
-                valueMap.containsKey(Value.THREE) && valueMap.get(Value.THREE) == 1 &&
-                valueMap.containsKey(Value.FOUR) && valueMap.get(Value.FOUR) == 1 &&
-                valueMap.containsKey(Value.FIVE) && valueMap.get(Value.FIVE) == 1) {
-            for (Card c : cards) {
-                if (c.getValue() == Value.ACE || c.getValue() == Value.TWO || c.getValue() == Value.THREE || c.getValue() == Value.FOUR || c.getValue() == Value.FIVE) {
-                    straightCards.add(c);
-                }
+        ArrayList<Card> flushCards = new ArrayList<>();
+        for (Card c : cards) {
+            if (c.getSuit() == flushSuit) {
+                flushCards.add(c);
             }
         }
+        flushCards.sort(new SortByValueDescending());
 
-        return checkFlush(straightCards);
+        ArrayList<Card> bestFiveCards = straightBestHand(flushCards);
+        cards.removeAll(bestFiveCards); // remove all the cards added to the best hand from the remaining cards
+
+        return bestFiveCards;
     }
 
     /**
@@ -736,6 +740,15 @@ public class EquityAnalyzer {
             return true;
         }
         return false;
+    }
+
+    /**
+     * If the best hand is a royal flush, determine which 5 cards make the best hand
+     * @param cards The list of 7 cards
+     * @return The 5 cards to make the best possible royal flush hand
+     */
+    private ArrayList<Card> royalFlushBestHand(ArrayList<Card> cards) {
+        return flushBestHand(cards); // the best flush hand is a royal flush (always);
     }
 
     /**

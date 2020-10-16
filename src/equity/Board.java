@@ -49,6 +49,13 @@ public class Board {
         this.board.add(river);
     }
 
+    public void resetBoard() {
+        for (Card c : this.board) { this.board.remove(c); }
+        for (Card c : this.flop) { this.flop.remove(c); }
+        this.turn = null;
+        this.river = null;
+    }
+
     @Override
     public String toString() {
         String out = "";

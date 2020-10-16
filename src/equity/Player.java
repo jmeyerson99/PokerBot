@@ -37,4 +37,10 @@ public class Player {
     public ArrayList<Card> getBestPossibleHand() { return bestPossibleHand; }
 
     public void setBestPossibleHand(ArrayList<Card> bestPossibleHand) { this.bestPossibleHand = bestPossibleHand; }
+
+    public void resetHand() {
+        for (Card c : bestPossibleHand) { bestPossibleHand.remove(c); }
+        hand = null;
+        handRanking = null;
+    }
 }
