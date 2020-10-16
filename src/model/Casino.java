@@ -1,4 +1,6 @@
-package equity;
+package model;
+
+import equity.EquityAnalyzer;
 
 public class Casino {
 

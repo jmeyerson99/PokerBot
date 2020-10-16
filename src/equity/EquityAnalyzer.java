@@ -1,10 +1,13 @@
 package equity;
 
+import model.*;
+
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 
+// TODO - consider making an Equity Analyzer package, each group of 2 function (checkPair and pairBestHand) get put together in a class
 public class EquityAnalyzer {
 
     private Table table;
@@ -118,6 +121,7 @@ public class EquityAnalyzer {
         boolean straightFlush = checkStraightFlush(allCards);
         if (straightFlush) {
             p.setHandRanking(HandRanking.STRAIGHT_FLUSH);
+            p.setBestPossibleHand(straightFlushBestHand(allCards));
             return;
         }
         boolean quads = checkQuads(allCards);

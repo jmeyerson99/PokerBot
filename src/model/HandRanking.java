@@ -1,4 +1,4 @@
-package equity;
+package model;
 
 public enum HandRanking {
     ROYAL_FLUSH,

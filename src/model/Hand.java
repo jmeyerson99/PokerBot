@@ -1,4 +1,4 @@
-package equity;
+package model;
 
 public class Hand {
 
