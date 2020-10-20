@@ -19,6 +19,12 @@ public class Hand {
     }
 
     @Override
+    public boolean equals(Object obj) {
+        Hand hand = (Hand) obj;
+        return this.card1.equals(hand.getCard1()) && this.card2.equals(hand.getCard2());
+    }
+
+    @Override
     public String toString() {
         return card1.toString() + " " + card2.toString();
     }

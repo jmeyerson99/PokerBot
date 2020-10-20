@@ -2,6 +2,7 @@ package equity;
 
 import model.*;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -96,8 +97,8 @@ public class EquityAnalyzer {
 
     private void determineShowdownWinner() {
         for (Player p : this.table.getPlayers()) {
-            getBestHand(this.table.getBoard(), p);
-            System.out.println("Player " + p.getName() + " has " + p.getHandRanking() + ": " + p.getBestPossibleHand());
+            ArrayList<Card> bestHand = getBestHand(this.table.getBoard(), p);
+            System.out.println("Player " + p.getName() + " has " + p.getHandRanking() + ": " + bestHand);
         }
     }
 
@@ -106,68 +107,81 @@ public class EquityAnalyzer {
      * @param board The board
      * @param p The player (allows access to their hole cards)
      */
-    private void getBestHand(Board board, Player p) {
+    public ArrayList<Card> getBestHand(Board board, Player p) {
         ArrayList<Card> allCards = new ArrayList<>();
         allCards.add(p.getHand().getCard1());
         allCards.add(p.getHand().getCard2());
         allCards.addAll(board.getBoard());
 
+        ArrayList<Card> bestHand;
+
         boolean royalFlush = checkRoyalFlush(allCards);
         if (royalFlush) {
             p.setHandRanking(HandRanking.ROYAL_FLUSH);
-            p.setBestPossibleHand(royalFlushBestHand(allCards));
-            return;
+            bestHand = royalFlushBestHand(allCards);
+            p.setBestPossibleHand(bestHand);
+            return bestHand;
         }
         boolean straightFlush = checkStraightFlush(allCards);
         if (straightFlush) {
             p.setHandRanking(HandRanking.STRAIGHT_FLUSH);
-            p.setBestPossibleHand(straightFlushBestHand(allCards));
-            return;
+            bestHand = straightFlushBestHand(allCards);
+            p.setBestPossibleHand(bestHand);
+            return bestHand;
         }
         boolean quads = checkQuads(allCards);
         if (quads) {
             p.setHandRanking(HandRanking.QUADS);
-            p.setBestPossibleHand(quadsBestHand(allCards));
-            return;
+            bestHand = quadsBestHand(allCards);
+            p.setBestPossibleHand(bestHand);
+            return bestHand;
         }
         boolean fullHouse = checkFullHouse(allCards);
         if (fullHouse) {
             p.setHandRanking(HandRanking.FULL_HOUSE);
-            p.setBestPossibleHand(fullHouseBestHand(allCards));
-            return;
+            bestHand = royalFlushBestHand(allCards);
+            p.setBestPossibleHand(bestHand);
+            return bestHand;
         }
         boolean flush = checkFlush(allCards);
         if (flush) {
             p.setHandRanking(HandRanking.FLUSH);
-            p.setBestPossibleHand(flushBestHand(allCards));
-            return;
+            bestHand = flushBestHand(allCards);
+            p.setBestPossibleHand(bestHand);
+            return bestHand;
         }
         boolean straight = checkStraight(allCards);
         if (straight) {
             p.setHandRanking(HandRanking.STRAIGHT);
-            p.setBestPossibleHand(straightBestHand(allCards));
-            return;
+            bestHand = straightBestHand(allCards);
+            p.setBestPossibleHand(bestHand);
+            return bestHand;
         }
         boolean trips = checkTrips(allCards);
         if (trips) {
             p.setHandRanking(HandRanking.TRIPS);
-            p.setBestPossibleHand(tripsBestHand(allCards));
-            return;
+            bestHand = tripsBestHand(allCards);
+            p.setBestPossibleHand(bestHand);
+            return bestHand;
         }
         boolean twoPair = checkTwoPair(allCards);
         if (twoPair) {
             p.setHandRanking(HandRanking.TWO_PAIR);
-            p.setBestPossibleHand(twoPairBestHand(allCards));
-            return;
+            bestHand = twoPairBestHand(allCards);
+            p.setBestPossibleHand(bestHand);
+            return bestHand;
         }
         boolean pair = checkPair(allCards);
         if (pair) {
             p.setHandRanking(HandRanking.ONE_PAIR);
-            p.setBestPossibleHand(onePairBestHand(allCards));
-            return;
+            bestHand = onePairBestHand(allCards);
+            p.setBestPossibleHand(bestHand);
+            return bestHand;
         }
         p.setHandRanking(HandRanking.HIGH_CARD);
-        p.setBestPossibleHand(highCardBestHand(allCards));
+        bestHand = highCardBestHand(allCards);
+        p.setBestPossibleHand(bestHand);
+        return bestHand;
     }
 
     /**

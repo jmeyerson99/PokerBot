@@ -6,6 +6,9 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 public class test_EquityAnalyzer {
 
     private EquityAnalyzer CuT; // The component-under-test
@@ -30,6 +33,13 @@ public class test_EquityAnalyzer {
         testBoard.setTurn(new Card(Value.NINE, Suit.CLUB));
         testBoard.setRiver(new Card(Value.TWO, Suit.HEART));
         Assertions.assertEquals(HandRanking.HIGH_CARD, CuT.determineBestPossibleHand(testPlayer));
+
+        ArrayList<Card> bestHand = new ArrayList<Card>(Arrays.asList(
+                new Card(Value.ACE, Suit.HEART), new Card(Value.KING, Suit.HEART),
+                new Card(Value.JACK, Suit.DIAMOND), new Card(Value.NINE, Suit.CLUB),
+                new Card(Value.FOUR, Suit.CLUB)));
+
+        Assertions.assertEquals(bestHand, CuT.getBestHand(testBoard, testPlayer));
     }
 
     @Test
@@ -40,6 +50,13 @@ public class test_EquityAnalyzer {
         testBoard.setTurn(new Card(Value.NINE, Suit.CLUB));
         testBoard.setRiver(new Card(Value.TWO, Suit.HEART));
         Assertions.assertEquals(HandRanking.ONE_PAIR, CuT.determineBestPossibleHand(testPlayer));
+
+        ArrayList<Card> bestHand = new ArrayList<Card>(Arrays.asList(
+                new Card(Value.THREE, Suit.HEART), new Card(Value.THREE, Suit.SPADE),
+                new Card(Value.KING, Suit.HEART), new Card(Value.JACK, Suit.DIAMOND),
+                new Card(Value.NINE, Suit.CLUB)));
+
+        Assertions.assertEquals(bestHand, CuT.getBestHand(testBoard, testPlayer));
     }
 
     @Test

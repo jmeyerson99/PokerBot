@@ -18,6 +18,12 @@ public class Card {
     }
 
     @Override
+    public boolean equals(Object a) {
+        Card card1 = (Card) a;
+        return card1.suit == this.suit && card1.value == this.value;
+    }
+
+    @Override
     public String toString() {
         return value.toString() + "," + suit.toString();
     }
