@@ -75,7 +75,7 @@ public class test_EquityAnalyzer {
         Assertions.assertEquals(HandRanking.ONE_PAIR, CuT.determineBestPossibleHand(testPlayer));
 
         ArrayList<Card> bestHand = new ArrayList<Card>(Arrays.asList(
-                new Card(Value.JACK, Suit.HEART), new Card(Value.JACK, Suit.HEART),
+                new Card(Value.JACK, Suit.DIAMOND), new Card(Value.JACK, Suit.HEART),
                 new Card(Value.ACE, Suit.SPADE), new Card(Value.NINE, Suit.CLUB),
                 new Card(Value.FOUR, Suit.CLUB)));
 
@@ -109,8 +109,8 @@ public class test_EquityAnalyzer {
         Assertions.assertEquals(HandRanking.TWO_PAIR, CuT.determineBestPossibleHand(testPlayer));
 
         ArrayList<Card> bestHand = new ArrayList<Card>(Arrays.asList(
-                new Card(Value.THREE, Suit.CLUB), new Card(Value.THREE, Suit.SPADE),
-                new Card(Value.TWO, Suit.CLUB), new Card(Value.TWO, Suit.HEART),
+                new Card(Value.THREE, Suit.SPADE), new Card(Value.THREE, Suit.CLUB),
+                new Card(Value.TWO, Suit.HEART), new Card(Value.TWO, Suit.CLUB),
                 new Card(Value.KING, Suit.HEART)));
 
         Assertions.assertEquals(bestHand, CuT.getBestHand(testBoard, testPlayer));
@@ -228,8 +228,8 @@ public class test_EquityAnalyzer {
         Assertions.assertEquals(HandRanking.QUADS, CuT.determineBestPossibleHand(testPlayer));
 
         ArrayList<Card> bestHand = new ArrayList<Card>(Arrays.asList(
-                new Card(Value.FIVE, Suit.HEART), new Card(Value.FIVE, Suit.SPADE),
-                new Card(Value.FIVE, Suit.DIAMOND), new Card(Value.FIVE, Suit.CLUB),
+                new Card(Value.FIVE, Suit.HEART), new Card(Value.FIVE, Suit.DIAMOND),
+                new Card(Value.FIVE, Suit.SPADE), new Card(Value.FIVE, Suit.CLUB),
                 new Card(Value.FOUR, Suit.SPADE)));
 
         Assertions.assertEquals(bestHand, CuT.getBestHand(testBoard, testPlayer));
@@ -245,8 +245,8 @@ public class test_EquityAnalyzer {
         Assertions.assertEquals(HandRanking.QUADS, CuT.determineBestPossibleHand(testPlayer));
 
         ArrayList<Card> bestHand = new ArrayList<Card>(Arrays.asList(
-                new Card(Value.FIVE, Suit.HEART), new Card(Value.FIVE, Suit.SPADE),
-                new Card(Value.FIVE, Suit.DIAMOND), new Card(Value.FIVE, Suit.CLUB),
+                new Card(Value.FIVE, Suit.DIAMOND), new Card(Value.FIVE, Suit.SPADE),
+                new Card(Value.FIVE, Suit.CLUB), new Card(Value.FIVE, Suit.HEART),
                 new Card(Value.SIX, Suit.HEART)));
 
         Assertions.assertEquals(bestHand, CuT.getBestHand(testBoard, testPlayer));
@@ -313,7 +313,7 @@ public class test_EquityAnalyzer {
         Assertions.assertEquals(HandRanking.FULL_HOUSE, CuT.determineBestPossibleHand(testPlayer));
 
         ArrayList<Card> bestHand = new ArrayList<Card>(Arrays.asList(
-                new Card(Value.FIVE, Suit.DIAMOND), new Card(Value.FIVE, Suit.SPADE),
+                new Card(Value.FIVE, Suit.SPADE), new Card(Value.FIVE, Suit.DIAMOND),
                 new Card(Value.FIVE, Suit.CLUB), new Card(Value.SIX, Suit.HEART),
                 new Card(Value.SIX, Suit.SPADE)));
 
@@ -330,7 +330,7 @@ public class test_EquityAnalyzer {
         Assertions.assertEquals(HandRanking.FULL_HOUSE, CuT.determineBestPossibleHand(testPlayer));
 
         ArrayList<Card> bestHand = new ArrayList<Card>(Arrays.asList(
-                new Card(Value.FIVE, Suit.DIAMOND), new Card(Value.FIVE, Suit.SPADE),
+                new Card(Value.FIVE, Suit.SPADE), new Card(Value.FIVE, Suit.DIAMOND),
                 new Card(Value.FIVE, Suit.CLUB), new Card(Value.SIX, Suit.HEART),
                 new Card(Value.SIX, Suit.SPADE)));
 
@@ -347,7 +347,7 @@ public class test_EquityAnalyzer {
         Assertions.assertEquals(HandRanking.FULL_HOUSE, CuT.determineBestPossibleHand(testPlayer));
 
         ArrayList<Card> bestHand = new ArrayList<Card>(Arrays.asList(
-                new Card(Value.FIVE, Suit.DIAMOND), new Card(Value.FIVE, Suit.SPADE),
+                new Card(Value.FIVE, Suit.SPADE), new Card(Value.FIVE, Suit.DIAMOND),
                 new Card(Value.FIVE, Suit.CLUB), new Card(Value.FOUR, Suit.HEART),
                 new Card(Value.FOUR, Suit.CLUB)));
 
@@ -415,9 +415,10 @@ public class test_EquityAnalyzer {
         Assertions.assertEquals(HandRanking.STRAIGHT, CuT.determineBestPossibleHand(testPlayer));
 
         ArrayList<Card> bestHand = new ArrayList<Card>(Arrays.asList(
-                new Card(Value.FIVE, Suit.CLUB), new Card(Value.FOUR, Suit.CLUB),
-                new Card(Value.THREE, Suit.HEART), new Card(Value.TWO, Suit.DIAMOND),
-                new Card(Value.ACE, Suit.HEART)));
+                new Card(Value.ACE, Suit.HEART), new Card(Value.FIVE, Suit.CLUB),
+                new Card(Value.FOUR, Suit.CLUB), new Card(Value.THREE, Suit.HEART),
+                new Card(Value.TWO, Suit.DIAMOND)
+                ));
 
         Assertions.assertEquals(bestHand, CuT.getBestHand(testBoard, testPlayer));
     }
@@ -430,6 +431,13 @@ public class test_EquityAnalyzer {
         testBoard.setTurn(new Card(Value.FIVE, Suit.CLUB));
         testBoard.setRiver(new Card(Value.FOUR, Suit.HEART));
         Assertions.assertEquals(HandRanking.STRAIGHT, CuT.determineBestPossibleHand(testPlayer));
+
+        ArrayList<Card> bestHand = new ArrayList<Card>(Arrays.asList(
+                new Card(Value.EIGHT, Suit.CLUB), new Card(Value.SEVEN, Suit.SPADE),
+                new Card(Value.SIX, Suit.DIAMOND), new Card(Value.FIVE, Suit.SPADE),
+                new Card(Value.FOUR, Suit.HEART)));
+
+        Assertions.assertEquals(bestHand, CuT.getBestHand(testBoard, testPlayer));
     }
 
     @Test
@@ -440,6 +448,13 @@ public class test_EquityAnalyzer {
         testBoard.setTurn(new Card(Value.FIVE, Suit.CLUB));
         testBoard.setRiver(new Card(Value.FOUR, Suit.HEART));
         Assertions.assertEquals(HandRanking.STRAIGHT, CuT.determineBestPossibleHand(testPlayer));
+
+        ArrayList<Card> bestHand = new ArrayList<Card>(Arrays.asList(
+                new Card(Value.EIGHT, Suit.CLUB), new Card(Value.SEVEN, Suit.HEART),
+                new Card(Value.SIX, Suit.DIAMOND), new Card(Value.FIVE, Suit.SPADE),
+                new Card(Value.FOUR, Suit.HEART)));
+
+        Assertions.assertEquals(bestHand, CuT.getBestHand(testBoard, testPlayer));
     }
 
     @Test
@@ -450,6 +465,13 @@ public class test_EquityAnalyzer {
         testBoard.setTurn(new Card(Value.FIVE, Suit.CLUB));
         testBoard.setRiver(new Card(Value.FOUR, Suit.HEART));
         Assertions.assertEquals(HandRanking.STRAIGHT, CuT.determineBestPossibleHand(testPlayer));
+
+        ArrayList<Card> bestHand = new ArrayList<Card>(Arrays.asList(
+                new Card(Value.EIGHT, Suit.CLUB), new Card(Value.SEVEN, Suit.SPADE),
+                new Card(Value.SIX, Suit.DIAMOND), new Card(Value.FIVE, Suit.HEART),
+                new Card(Value.FOUR, Suit.HEART)));
+
+        Assertions.assertEquals(bestHand, CuT.getBestHand(testBoard, testPlayer));
     }
 
     @Test
@@ -460,6 +482,13 @@ public class test_EquityAnalyzer {
         testBoard.setTurn(new Card(Value.EIGHT, Suit.HEART));
         testBoard.setRiver(new Card(Value.SEVEN, Suit.HEART));
         Assertions.assertEquals(HandRanking.STRAIGHT_FLUSH, CuT.determineBestPossibleHand(testPlayer));
+
+        ArrayList<Card> bestHand = new ArrayList<Card>(Arrays.asList(
+                new Card(Value.EIGHT, Suit.HEART), new Card(Value.SEVEN, Suit.HEART),
+                new Card(Value.SIX, Suit.HEART), new Card(Value.FIVE, Suit.HEART),
+                new Card(Value.FOUR, Suit.HEART)));
+
+        Assertions.assertEquals(bestHand, CuT.getBestHand(testBoard, testPlayer));
     }
 
     @Test
@@ -470,6 +499,13 @@ public class test_EquityAnalyzer {
         testBoard.setTurn(new Card(Value.FOUR, Suit.HEART));
         testBoard.setRiver(new Card(Value.THREE, Suit.HEART));
         Assertions.assertEquals(HandRanking.STRAIGHT_FLUSH, CuT.determineBestPossibleHand(testPlayer));
+
+        ArrayList<Card> bestHand = new ArrayList<Card>(Arrays.asList(
+                new Card(Value.SEVEN, Suit.HEART), new Card(Value.SIX, Suit.HEART),
+                new Card(Value.FIVE, Suit.HEART), new Card(Value.FOUR, Suit.HEART),
+                new Card(Value.THREE, Suit.HEART)));
+
+        Assertions.assertEquals(bestHand, CuT.getBestHand(testBoard, testPlayer));
     }
 
     @Test
@@ -480,6 +516,13 @@ public class test_EquityAnalyzer {
         testBoard.setTurn(new Card(Value.FOUR, Suit.HEART));
         testBoard.setRiver(new Card(Value.THREE, Suit.HEART));
         Assertions.assertEquals(HandRanking.STRAIGHT_FLUSH, CuT.determineBestPossibleHand(testPlayer));
+
+        ArrayList<Card> bestHand = new ArrayList<Card>(Arrays.asList(
+                new Card(Value.SEVEN, Suit.HEART), new Card(Value.SIX, Suit.HEART),
+                new Card(Value.FIVE, Suit.HEART), new Card(Value.FOUR, Suit.HEART),
+                new Card(Value.THREE, Suit.HEART)));
+
+        Assertions.assertEquals(bestHand, CuT.getBestHand(testBoard, testPlayer));
     }
 
     @Test
@@ -490,6 +533,13 @@ public class test_EquityAnalyzer {
         testBoard.setTurn(new Card(Value.FOUR, Suit.HEART));
         testBoard.setRiver(new Card(Value.THREE, Suit.HEART));
         Assertions.assertEquals(HandRanking.STRAIGHT_FLUSH, CuT.determineBestPossibleHand(testPlayer));
+
+        ArrayList<Card> bestHand = new ArrayList<Card>(Arrays.asList(
+                new Card(Value.ACE, Suit.HEART), new Card(Value.FIVE, Suit.HEART),
+                new Card(Value.FOUR, Suit.HEART), new Card(Value.THREE, Suit.HEART),
+                new Card(Value.TWO, Suit.HEART)));
+
+        Assertions.assertEquals(bestHand, CuT.getBestHand(testBoard, testPlayer));
     }
 
     @Test
@@ -500,6 +550,13 @@ public class test_EquityAnalyzer {
         testBoard.setTurn(new Card(Value.FOUR, Suit.HEART));
         testBoard.setRiver(new Card(Value.THREE, Suit.HEART));
         Assertions.assertEquals(HandRanking.STRAIGHT_FLUSH, CuT.determineBestPossibleHand(testPlayer));
+
+        ArrayList<Card> bestHand = new ArrayList<Card>(Arrays.asList(
+                new Card(Value.SEVEN, Suit.HEART), new Card(Value.SIX, Suit.HEART),
+                new Card(Value.FIVE, Suit.HEART), new Card(Value.FOUR, Suit.HEART),
+                new Card(Value.THREE, Suit.HEART)));
+
+        Assertions.assertEquals(bestHand, CuT.getBestHand(testBoard, testPlayer));
     }
 
     @Test
@@ -510,6 +567,13 @@ public class test_EquityAnalyzer {
         testBoard.setTurn(new Card(Value.JACK, Suit.CLUB));
         testBoard.setRiver(new Card(Value.SIX, Suit.SPADE));
         Assertions.assertEquals(HandRanking.ROYAL_FLUSH, CuT.determineBestPossibleHand(testPlayer));
+
+        ArrayList<Card> bestHand = new ArrayList<Card>(Arrays.asList(
+                new Card(Value.ACE, Suit.CLUB), new Card(Value.KING, Suit.CLUB),
+                new Card(Value.QUEEN, Suit.CLUB), new Card(Value.JACK, Suit.CLUB),
+                new Card(Value.TEN, Suit.CLUB)));
+
+        Assertions.assertEquals(bestHand, CuT.getBestHand(testBoard, testPlayer));
     }
 
     @Test
@@ -520,6 +584,13 @@ public class test_EquityAnalyzer {
         testBoard.setTurn(new Card(Value.JACK, Suit.CLUB));
         testBoard.setRiver(new Card(Value.SIX, Suit.SPADE));
         Assertions.assertEquals(HandRanking.ROYAL_FLUSH, CuT.determineBestPossibleHand(testPlayer));
+
+        ArrayList<Card> bestHand = new ArrayList<Card>(Arrays.asList(
+                new Card(Value.ACE, Suit.CLUB), new Card(Value.KING, Suit.CLUB),
+                new Card(Value.QUEEN, Suit.CLUB), new Card(Value.JACK, Suit.CLUB),
+                new Card(Value.TEN, Suit.CLUB)));
+
+        Assertions.assertEquals(bestHand, CuT.getBestHand(testBoard, testPlayer));
     }
 
     @Test
@@ -530,5 +601,13 @@ public class test_EquityAnalyzer {
         testBoard.setTurn(new Card(Value.JACK, Suit.CLUB));
         testBoard.setRiver(new Card(Value.TEN, Suit.CLUB));
         Assertions.assertEquals(HandRanking.ROYAL_FLUSH, CuT.determineBestPossibleHand(testPlayer));
+
+        ArrayList<Card> bestHand = new ArrayList<Card>(Arrays.asList(
+                new Card(Value.ACE, Suit.CLUB), new Card(Value.KING, Suit.CLUB),
+                new Card(Value.QUEEN, Suit.CLUB), new Card(Value.JACK, Suit.CLUB),
+                new Card(Value.TEN, Suit.CLUB)));
+
+        Assertions.assertEquals(bestHand, CuT.getBestHand(testBoard, testPlayer));
+
     }
 }

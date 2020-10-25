@@ -2,7 +2,6 @@ package equity;
 
 import model.*;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -139,7 +138,7 @@ public class EquityAnalyzer {
         boolean fullHouse = checkFullHouse(allCards);
         if (fullHouse) {
             p.setHandRanking(HandRanking.FULL_HOUSE);
-            bestHand = royalFlushBestHand(allCards);
+            bestHand = fullHouseBestHand(allCards);
             p.setBestPossibleHand(bestHand);
             return bestHand;
         }
@@ -477,8 +476,8 @@ public class EquityAnalyzer {
 
         cards.removeAll(bestFiveCards); // remove all the cards added to the best hand from the remaining cards
         while (bestFiveCards.size() < 5) { //go through the sorted card values and add them until there are 5 cards in the final hand
-            bestFiveCards.add(cards.get(cards.size()-1)); //add the last card in the sorted array to the best hand
-            cards.remove(cards.get(cards.size()-1)); //remove the added card from the list
+            bestFiveCards.add(cards.get(0)); //add the next highest card to the list of best cards
+            cards.remove(cards.get(0)); //remove the added card from the list
         }
         return bestFiveCards;
     }
@@ -613,8 +612,6 @@ public class EquityAnalyzer {
         return false;
     }
 
-    // TODO - check case for this hand: 4, 5, 5, 6, 7, 8, K - implemented (requires testing)
-    // TODO - check case for this hand: 4, 5, 5, 5, 6, 7, 8 - implemented (requires testing)
     /**
      * If the best hand is a straight, determine which 5 cards make the best hand
      * @param cards The list of 7 cards
@@ -671,9 +668,14 @@ public class EquityAnalyzer {
             }
         }
 
-        // TODO - adjust this for the skipCount variable (follow something along the lines of the internal for loop above) - not implemented
-        for (int k = 0; k < 5; k++) { // start at the straight start index and then add the next 5 cards (including that one)
-            bestFiveCards.add(cards.get(k + startingStraightIndex));
+
+        Value previousValue = cards.get(startingStraightIndex).getValue(); // Get the value of the first card of the straight
+        bestFiveCards.add(cards.get(startingStraightIndex)); // Add the first card of the straight
+        for (int k = 1; k < 5 + skipCount; k++) { // start at the straight start index and then add the next 4 cards
+            if (!(previousValue == cards.get(k + startingStraightIndex).getValue())) {
+                bestFiveCards.add(cards.get(k + startingStraightIndex));
+            }
+            previousValue = cards.get(k + startingStraightIndex).getValue(); //update previous value
         }
 
         cards.removeAll(bestFiveCards); // remove all the cards added to the best hand from the remaining cards
