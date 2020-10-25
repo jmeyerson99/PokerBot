@@ -94,15 +94,25 @@ public class EquityAnalyzer {
         return HandRanking.HIGH_CARD;
     }
 
+    // TODO - handle  a CHOP
     private void determineShowdownWinner() {
         for (Player p : this.table.getPlayers()) {
             ArrayList<Card> bestHand = getBestHand(this.table.getBoard(), p);
             System.out.println("Player " + p.getName() + " has " + p.getHandRanking() + ": " + bestHand);
         }
+
+        ArrayList<Player> playerRankings = new ArrayList<>();
+        playerRankings.addAll(this.table.getPlayers());
+        playerRankings.sort(new SortPlayersByBestHand());
+        System.out.println("Official Rankings: ");
+        for (Player p : playerRankings) {
+            System.out.println(p.getName());
+        }
     }
 
     /**
-     * Determine the best hand a player can make, given a board, and the player.
+     * Determine the best hand a player can make, given a board, and the player. This method returns the best 5 card
+     * hand, and sets that hand in the Player field.
      * @param board The board
      * @param p The player (allows access to their hole cards)
      */
@@ -788,6 +798,55 @@ public class EquityAnalyzer {
         @Override
         public int compare(Card a, Card b) {
             return Value.getIntValue(b.getValue()) - Value.getIntValue(a.getValue());
+        }
+    }
+
+    /**
+     * Anonymous class, also comparator for sorting players by their best hand
+     */
+    class SortPlayersByBestHand implements Comparator<Player> {
+        @Override
+        public int compare(Player a, Player b) {
+            if (a.getHandRanking() != b.getHandRanking()) { // if the hand rankings are different, return the better one
+                return HandRanking.getRankValue(b.getHandRanking()) - HandRanking.getRankValue(a.getHandRanking());
+            }
+            // The hand rankings are the same
+            HandRanking ranking = a.getHandRanking();
+            switch (ranking) {
+                case STRAIGHT:
+                case STRAIGHT_FLUSH:
+                    boolean player1Wheel = isAWheel(a.getBestPossibleHand());
+                    boolean player2Wheel = isAWheel(b.getBestPossibleHand());
+                    if (player1Wheel & player2Wheel) {return 0;} //both players have a wheel
+                    if (player1Wheel & !player2Wheel) {return 1;} //player 1 has a wheel
+                    if (player2Wheel & !player1Wheel) {return -1;} //player 2 has a wheel
+                    // fall through if no one has a wheel
+                    
+                case HIGH_CARD:
+                case ONE_PAIR:
+                case TWO_PAIR:
+                case TRIPS:
+                case QUADS:
+                case FLUSH:
+                case FULL_HOUSE:
+                    for (int i = 0; i < 5; i++) {
+                        Card player1Card = a.getBestPossibleHand().get(i);
+                        Card player2Card = b.getBestPossibleHand().get(i);
+                        if (player1Card.getValue() != player2Card.getValue()) {return Value.getIntValue(player2Card.getValue()) - Value.getIntValue(player1Card.getValue()); }
+                    }
+                    break;
+
+                case ROYAL_FLUSH:
+                    // The hands are equal (CHOP)
+                    break;
+
+                default:
+                    // ERROR
+                    break;
+            }
+
+            // The hands are exactly equal (in value, suit does not matter)
+            return 0;
         }
     }
 

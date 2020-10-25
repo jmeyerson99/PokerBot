@@ -8,8 +8,8 @@ public class Casino {
 
     private EquityAnalyzer analyzer;
 
-    public Casino() {
-        this.table = new Table(3);
+    public Casino(int numPlayers) {
+        this.table = new Table(numPlayers);
         this.analyzer = new EquityAnalyzer(table);
     }
 
@@ -22,7 +22,7 @@ public class Casino {
     }
 
     public static void main(String[] args) {
-        Casino casino = new Casino();
+        Casino casino = new Casino(3);
         casino.shuffleUpAndDeal();
     }
 }
