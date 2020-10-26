@@ -3,6 +3,7 @@ package unit.equity;
 import equity.*;
 import model.*;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -21,7 +22,7 @@ public class test_EquityAnalyzer {
     /**
      * TODO - find a way to not create a new table literally every time (change tag or setup() name)
      */
-    public void setup() {
+    public void initialSetup() {
         testTable = new Table(1);
         testPlayer = testTable.getPlayers().get(0);
         testBoard = testTable.getBoard();
