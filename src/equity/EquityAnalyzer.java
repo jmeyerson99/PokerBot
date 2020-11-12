@@ -7,7 +7,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 
-// TODO - consider making an Equity Analyzer package, each group of 2 function (checkPair and pairBestHand) get put together in a class
+// TODO - consider making an Equity Analyzer package, each group of 2 function (checkPair and pairBestHand) get put together in a class (NEXT TASK!!!!!!!)
 public class EquityAnalyzer {
 
     private Table table;
@@ -43,6 +43,77 @@ public class EquityAnalyzer {
                 // ERROR (invalid size)
                 break;
         }
+    }
+
+    private Map<Integer, ArrayList<Player>> mapOutFinalRankings() {
+        ArrayList<Player> playerRankings = new ArrayList<>();
+        playerRankings.addAll(this.table.getPlayers());
+        playerRankings.sort(new SortPlayersByBestHand());
+
+        int ranking = 1;
+        int numChops = 0;
+        ArrayList<Player> chops = new ArrayList<>();
+        Map<Integer, ArrayList<Player>> rankings = new HashMap<>();
+        for (int i = 0; i < playerRankings.size(); i = i + 1 + numChops) {
+            chops.add(playerRankings.get(i));
+            numChops = 0;
+            for (int j = i + 1; j < playerRankings.size(); j++) {
+                if (0 == compareBestHands(playerRankings.get(i), playerRankings.get(j))) {
+                    // CHOP
+                    chops.add(playerRankings.get(j));
+                    numChops++;
+                }
+            }
+            rankings.put(ranking, chops);
+
+            ranking++;
+            chops = new ArrayList<>(); // TODO - find better way to not waste memory (although Java cleans up for me)
+        }
+
+        return rankings;
+    }
+
+    private int compareBestHands(Player a, Player b) {
+        if (a.getHandRanking() != b.getHandRanking()) { // if the hand rankings are different, return the better one
+            return HandRanking.getRankValue(b.getHandRanking()) - HandRanking.getRankValue(a.getHandRanking());
+        }
+        // The hand rankings are the same
+        HandRanking ranking = a.getHandRanking();
+        switch (ranking) {
+            case STRAIGHT:
+            case STRAIGHT_FLUSH:
+                boolean player1Wheel = isAWheel(a.getBestPossibleHand());
+                boolean player2Wheel = isAWheel(b.getBestPossibleHand());
+                if (player1Wheel & player2Wheel) {return 0;} //both players have a wheel
+                if (player1Wheel & !player2Wheel) {return 1;} //player 1 has a wheel
+                if (player2Wheel & !player1Wheel) {return -1;} //player 2 has a wheel
+                // fall through if no one has a wheel
+
+            case HIGH_CARD:
+            case ONE_PAIR:
+            case TWO_PAIR:
+            case TRIPS:
+            case QUADS:
+            case FLUSH:
+            case FULL_HOUSE:
+                for (int i = 0; i < 5; i++) {
+                    Card player1Card = a.getBestPossibleHand().get(i);
+                    Card player2Card = b.getBestPossibleHand().get(i);
+                    if (player1Card.getValue() != player2Card.getValue()) {return Value.getIntValue(player2Card.getValue()) - Value.getIntValue(player1Card.getValue()); }
+                }
+                break;
+
+            case ROYAL_FLUSH:
+                // The hands are equal (CHOP)
+                break;
+
+            default:
+                // ERROR
+                break;
+        }
+
+        // The hands are exactly equal (in value, suit does not matter)
+        return 0;
     }
 
     /**
@@ -94,7 +165,10 @@ public class EquityAnalyzer {
         return HandRanking.HIGH_CARD;
     }
 
-    // TODO - handle  a CHOP
+    /**
+     * Determine the ranking of players in the given hand
+     * TODO - return the player rankings?
+     */
     private void determineShowdownWinner() {
         for (Player p : this.table.getPlayers()) {
             ArrayList<Card> bestHand = getBestHand(this.table.getBoard(), p);
@@ -104,9 +178,21 @@ public class EquityAnalyzer {
         ArrayList<Player> playerRankings = new ArrayList<>();
         playerRankings.addAll(this.table.getPlayers());
         playerRankings.sort(new SortPlayersByBestHand());
-        System.out.println("Official Rankings: ");
+        System.out.println("Official Rankings (no chop code): ");
         for (Player p : playerRankings) {
             System.out.println(p.getName());
+        }
+
+        Map<Integer, ArrayList<Player>> finalRanks = mapOutFinalRankings();
+        System.out.println("Official Rankings (with chop code): ");
+        int rank = 1;
+        while (finalRanks.containsKey(rank)) {
+            System.out.print(rank + ": ");
+            for (Player p : finalRanks.get(rank)) {
+                System.out.print(p.getName() + ", ");
+            }
+            System.out.println();
+            rank++;
         }
     }
 
@@ -721,7 +807,6 @@ public class EquityAnalyzer {
         return checkStraight(flushCards);
     }
 
-    // TODO - implemented (requires testing)
     /**
      * If the best hand is a straight flush, determine which 5 cards make the best hand
      * @param cards The list of 7 cards

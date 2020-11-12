@@ -1,9 +1,8 @@
 package unit.equity;
 
-import equity.*;
+import equity.EquityAnalyzer;
 import model.*;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -609,6 +608,5 @@ public class test_EquityAnalyzer {
                 new Card(Value.TEN, Suit.CLUB)));
 
         Assertions.assertEquals(bestHand, CuT.getBestHand(testBoard, testPlayer));
-
     }
 }
