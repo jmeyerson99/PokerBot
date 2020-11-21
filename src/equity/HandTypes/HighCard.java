@@ -10,7 +10,7 @@ import java.util.Map;
 import static equity.mapping.MapCardsToValue.mapCardsToValue;
 
 public class HighCard extends HandType {
-    
+
     public static boolean checkHand(ArrayList<Card> cards) {
         Map<Value, Integer> valueMap = mapCardsToValue(cards);
         cards.sort(new SortByValueDescending()); //sort the cards by value (ace is high)
