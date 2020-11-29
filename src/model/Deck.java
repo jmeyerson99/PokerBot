@@ -43,4 +43,12 @@ public class Deck {
             }
         }
     }
+
+    public ArrayList<Card> copyDeck() {
+        ArrayList<Card> cards = new ArrayList<>();
+        for (Card c : this.cards) {
+            cards.add(new Card(c.getValue(), c.getSuit()));
+        }
+        return cards;
+    }
 }

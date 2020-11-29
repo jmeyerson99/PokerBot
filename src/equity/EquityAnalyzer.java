@@ -4,16 +4,16 @@ import equity.HandTypes.*;
 import equity.sorting.SortPlayersByBestHand;
 import model.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.text.DecimalFormat;
+import java.util.*;
 
 import static equity.HandTypes.Straight.isAWheel;
 
-// TODO - consider making an Equity Analyzer package, each group of 2 function (checkPair and pairBestHand) get put together in a class (NEXT TASK!!!!!!!)
 public class EquityAnalyzer {
 
     private Table table;
+
+    public DecimalFormat df = new DecimalFormat("###.##");
 
     public EquityAnalyzer(Table table) {
         this.table = table;
@@ -27,14 +27,17 @@ public class EquityAnalyzer {
         switch (board.getSize()) {
             // Who is leading pre flop?
             case 0:
+                //determinePreFlopEquity(); // TODO - requires implementation but takes 37 minutes to execute and fails
                 break;
 
             // Who is leading after the flop?
             case 3:
+                determineFlopEquity();
                 break;
 
             // Who is leading after the turn?
             case 4:
+                determineTurnEquity();
                 break;
 
             // Who won?
@@ -48,9 +51,139 @@ public class EquityAnalyzer {
         }
     }
 
+    private void determineTurnEquity() {
+        Map<Player, Integer> timesWon = new HashMap<>();
+        for (Player p : this.table.getPlayers()) {
+            timesWon.put(p, 0);
+        }
+        int handsSimulated = 0;
+        for (Card c : this.table.getDeck().copyDeck()) {
+            this.table.getBoard().setRiver(c);
+            // determine equities
+            Map<Integer, ArrayList<Player>> results = mapOutFinalRankings();
+            ArrayList<Player> firstPlacePlayers = results.get(1);
+            for (Player p : firstPlacePlayers) {
+                int k = timesWon.get(p) + 1;
+                timesWon.put(p, k);
+            }
+            handsSimulated++;
+            this.table.getBoard().removeRiver();
+        }
+        Map<Player, Double> percentageWon = new HashMap<>();
+        for (Player p : timesWon.keySet()) {
+            percentageWon.put(p, ((double) timesWon.get(p) / (double) handsSimulated));
+        }
+
+        System.out.println("Equity going into the river: ");
+        for (Player p : percentageWon.keySet()) {
+            System.out.println("Player " + p.getName() + " odds are: " + df.format((percentageWon.get(p) * 100)) + "%");
+        }
+    }
+
+    private void determineFlopEquity() {
+        Map<Player, Integer> timesWon = new HashMap<>();
+        for (Player p : this.table.getPlayers()) {
+            timesWon.put(p, 0);
+        }
+        int handsSimulated = 0;
+        ArrayList<Card> remainingCards = this.table.getDeck().copyDeck();
+        // Note- ORDER MATTERS
+        for (Card c : remainingCards) {
+            for (Card cc : remainingCards) {
+                // Skip the same card being placed twice
+                if (c != cc) {
+                    this.table.getBoard().setTurn(c);
+                    this.table.getBoard().setRiver(cc);
+                    // determine equities
+                    Map<Integer, ArrayList<Player>> results = mapOutFinalRankings();
+                    ArrayList<Player> firstPlacePlayers = results.get(1);
+                    for (Player p : firstPlacePlayers) {
+                        int k = timesWon.get(p) + 1;
+                        timesWon.put(p, k);
+                    }
+                    handsSimulated++;
+                    this.table.getBoard().removeTurn();
+                    this.table.getBoard().removeRiver();
+                }
+            }
+        }
+        Map<Player, Double> percentageWon = new HashMap<>();
+        for (Player p : timesWon.keySet()) {
+            percentageWon.put(p, ((double) timesWon.get(p) / (double) handsSimulated));
+        }
+
+        System.out.println("Equity going into the turn: ");
+        for (Player p : percentageWon.keySet()) {
+            System.out.println("Player " + p.getName() + " odds are: " + df.format((percentageWon.get(p) * 100)) + "%");
+        }
+    }
+
+    // TODO - does not work, takes 37 minutes to run
+    private void determinePreFlopEquity() {
+        Map<Player, Integer> timesWon = new HashMap<>();
+        for (Player p : this.table.getPlayers()) {
+            timesWon.put(p, 0);
+        }
+        int handsSimulated = 0;
+        ArrayList<Card> remainingCards = this.table.getDeck().copyDeck();
+        // Note- ORDER MATTERS
+        for (Card c : remainingCards) {
+            for (Card cc : remainingCards) {
+                for (Card ccc : remainingCards) {
+                    for (Card cccc : remainingCards) {
+                        for (Card ccccc : remainingCards) {
+                            if (noRepeatedCards(c, cc, ccc, cccc, ccccc)) {
+                                this.table.getBoard().setFlop(c, cc, ccc);
+                                this.table.getBoard().setTurn(cccc);
+                                this.table.getBoard().setRiver(ccccc);
+                                // determine equities
+                                Map<Integer, ArrayList<Player>> results = mapOutFinalRankings();
+                                ArrayList<Player> firstPlacePlayers = results.get(1);
+                                for (Player p : firstPlacePlayers) {
+                                    int k = timesWon.get(p) + 1;
+                                    timesWon.put(p, k);
+                                }
+                                handsSimulated++;
+                                this.table.getBoard().removeFlop();
+                                this.table.getBoard().removeTurn();
+                                this.table.getBoard().removeRiver();
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        Map<Player, Double> percentageWon = new HashMap<>();
+        for (Player p : timesWon.keySet()) {
+            percentageWon.put(p, ((double) timesWon.get(p) / (double) handsSimulated));
+        }
+
+        System.out.println("Equity going into the flop: ");
+        for (Player p : percentageWon.keySet()) {
+            System.out.println("Player " + p.getName() + " odds are: " + df.format((percentageWon.get(p) * 100)) + "%");
+        }
+    }
+
+    private boolean noRepeatedCards(Card c1, Card c2, Card c3, Card c4, Card c5) {
+        Set<Card> set = new HashSet<>();
+        set.add(c1);
+        set.add(c2);
+        set.add(c3);
+        set.add(c4);
+        set.add(c5);
+        return 5 == set.size();
+    }
+
+
     private Map<Integer, ArrayList<Player>> mapOutFinalRankings() {
         ArrayList<Player> playerRankings = new ArrayList<>();
         playerRankings.addAll(this.table.getPlayers());
+
+        // determine each player's best hand
+        for (Player p : this.table.getPlayers()) {
+            getBestHand(table.getBoard(), p);
+        }
+
         playerRankings.sort(new SortPlayersByBestHand());
 
         int ranking = 1;
@@ -70,7 +203,7 @@ public class EquityAnalyzer {
             rankings.put(ranking, chops);
 
             ranking++;
-            chops = new ArrayList<>(); // TODO - find better way to not waste memory (although Java cleans up for me)
+            chops = new ArrayList<>(); // TODO - chops.clear() doesn't work (get all 0's for %s, for (Player p : chops) { chops.remove(p); } doesn't work either, ConcurrentModificationException
         }
 
         return rankings;
@@ -175,7 +308,6 @@ public class EquityAnalyzer {
 
     /**
      * Determine the ranking of players in the given hand
-     * TODO - return the player rankings?
      */
     private void determineShowdownWinner() {
         for (Player p : this.table.getPlayers()) {
@@ -205,7 +337,7 @@ public class EquityAnalyzer {
     }
 
     /**
-     * Determine the best hand a player can make, given a board, and the player. This method returns the best 5 card
+     * Get the best hand a player can make, given a board, and the player. This method returns the best 5 card
      * hand, and sets that hand in the Player field.
      * @param board The board
      * @param p The player (allows access to their hole cards)

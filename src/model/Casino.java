@@ -15,8 +15,11 @@ public class Casino {
 
     public void shuffleUpAndDeal() {
         this.table.dealHands();
+        this.analyzer.determineEquity();
         this.table.dealFlop();
+        this.analyzer.determineEquity();
         this.table.dealTurn();
+        this.analyzer.determineEquity();
         this.table.dealRiver();
         this.analyzer.determineEquity();
     }

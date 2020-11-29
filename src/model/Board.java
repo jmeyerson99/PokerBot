@@ -51,8 +51,25 @@ public class Board {
 
     public void resetBoard() {
         for (Card c : this.board) { this.board.remove(c); }
-        for (Card c : this.flop) { this.flop.remove(c); }
+        for (Card c : this.flop) { this.board.remove(c); } // TODO - this.flop.clear() doesn't work
         this.turn = null;
+        this.river = null;
+    }
+
+    public void removeFlop() {
+        for (Card c : this.flop) {
+            this.board.remove(c);
+        }
+        for (Card c : this.flop) { this.board.remove(c); } // TODO - this.flop.clear() doesn't work
+    }
+
+    public void removeTurn() {
+        this.board.remove(this.turn);
+        this.turn = null;
+    }
+
+    public void removeRiver() {
+        this.board.remove(this.river);
         this.river = null;
     }
 

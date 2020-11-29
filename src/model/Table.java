@@ -68,5 +68,9 @@ public class Table {
         return this.players;
     }
 
+    public Deck getDeck() {
+        return this.deck;
+    }
+
     // TODO - add determineWinningHand function
 }
