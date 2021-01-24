@@ -27,7 +27,7 @@ public class EquityAnalyzer {
         switch (board.getSize()) {
             // Who is leading pre flop?
             case 0:
-                //determinePreFlopEquity(); // TODO - requires implementation but takes 37 minutes to execute and fails
+                determinePreFlopEquity(); // TODO - requires implementation but takes 37 minutes to execute and fails
                 break;
 
             // Who is leading after the flop?
